@@ -1,5 +1,6 @@
 import { Navbar } from "./_components/navbar";
-import { Sidebar } from "./_components/sidebar";
+// import { Sidebar } from "./_components/sidebar";
+import SidebarCmp from "./_components/sidebarCmp";
 
 const DashboardLayout = ({
   children
@@ -8,13 +9,13 @@ const DashboardLayout = ({
 }) => {
   return ( 
     <div className="h-full">
-      <div className="h-[80px] md:pl-56 fixed inset-y-0 w-full z-50">
+      {/* <div className="h-[80px] md:pl-56 fixed inset-y-0 w-full z-50">
         <Navbar />
+      </div> */}
+      <div className="hidden md:flex h-full w-auto flex-col fixed inset-y-0 z-50">
+        <SidebarCmp />
       </div>
-      <div className="hidden md:flex h-full w-56 flex-col fixed inset-y-0 z-50">
-        <Sidebar />
-      </div>
-      <main className="md:pl-56 pt-[80px] h-full">
+      <main className="md:pl-[60px] md:pt-[5px] pt-[45px] h-full">
         {children}
       </main>
     </div>

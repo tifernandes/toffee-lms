@@ -10,6 +10,23 @@ import { Preview } from "@/components/preview";
 import { VideoPlayer } from "./_components/video-player";
 import { CourseEnrollButton } from "./_components/course-enroll-button";
 import { CourseProgressButton } from "./_components/course-progress-button";
+import { CourseSidebar } from "../../_components/course-sidebar";
+
+import { getProgress } from "@/actions/get-progress";
+import { db } from "@/lib/db";
+
+import { Button } from "@/components/ui/button";
+
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 const ChapterIdPage = async ({
   params
@@ -36,10 +53,38 @@ const ChapterIdPage = async ({
     courseId: params.courseId,
   });
 
+  const progressCount = await getProgress(userId, params.courseId);
+
   if (!chapter || !course) {
     return redirect("/")
   }
 
+  const courseQuery = await db.course.findUnique({
+    where: {
+      id: params.courseId,
+    },
+    include: {
+      chapters: {
+        where: {
+          isPublished: true,
+        },
+        include: {
+          userProgress: {
+            where: {
+              userId,
+            }
+          }
+        },
+        orderBy: {
+          position: "asc"
+        }
+      },
+    },
+  });
+
+  if (!courseQuery) {
+    return redirect("/");
+  }
 
   const isLocked = !chapter.isFree && !purchase;
   const completeOnEnd = !!purchase && !userProgress?.isCompleted;
@@ -75,19 +120,37 @@ const ChapterIdPage = async ({
             <h2 className="text-2xl font-semibold mb-2">
               {chapter.title}
             </h2>
-            {purchase ? (
-              <CourseProgressButton
-                chapterId={params.chapterId}
-                courseId={params.courseId}
-                nextChapterId={nextChapter?.id}
-                isCompleted={!!userProgress?.isCompleted}
-              />
-            ) : (
-              <CourseEnrollButton
-                courseId={params.courseId}
-                price={course.price!}
-              />
-            )}
+            <div className="flex gap-5 flex-col sm:flex-row">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline">Ver capítulos</Button>
+                </SheetTrigger>
+                <SheetContent className="p-0">
+                  <CourseSidebar
+                    course={courseQuery}
+                    progressCount={progressCount}
+                  />
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="submit">Save changes</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
+              {purchase ? (
+                <CourseProgressButton
+                  chapterId={params.chapterId}
+                  courseId={params.courseId}
+                  nextChapterId={nextChapter?.id}
+                  isCompleted={!!userProgress?.isCompleted}
+                />
+              ) : (
+                <CourseEnrollButton
+                  courseId={params.courseId}
+                  price={course.price!}
+                />
+              )}
+            </div>
           </div>
           <Separator />
           <div>
