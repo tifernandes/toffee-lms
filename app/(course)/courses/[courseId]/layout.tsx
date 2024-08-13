@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 
 import { CourseNavbar } from "./_components/course-navbar";
-import SidebarCmp from "../../../(dashboard)/_components/sidebarCmp";
 
 const CourseLayout = async ({
   children,
@@ -47,20 +46,9 @@ const CourseLayout = async ({
   }
 
   return (
-    <div className="h-full">
-      {/* <div className="h-[80px] md:pl-80 fixed inset-y-0 w-full z-50">
-        <CourseNavbar
-          course={course}
-          progressCount={progressCount}
-        />
-      </div> */}
-      <div className="flex flex-col fixed inset-y-0 z-50 ">
-        <SidebarCmp />
-      </div>
-      <main className="h-full">
-        {children}
-      </main>
-    </div>
+    <main className="h-full w-full">
+      {children}
+    </main>
   )
 }
 

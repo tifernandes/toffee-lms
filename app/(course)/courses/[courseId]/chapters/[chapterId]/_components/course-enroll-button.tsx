@@ -26,7 +26,7 @@ export const CourseEnrollButton = ({
 
       window.location.assign(response.data.url);
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo deu errado");
     } finally {
       setIsLoading(false);
     }

@@ -31,7 +31,7 @@ export const CourseProgressButton = ({
       setIsLoading(true);
 
       await axios.put(`/api/courses/${courseId}/chapters/${chapterId}/progress`, {
-        isCompleted: !isCompleted
+        isCompleted: true
       });
 
       if (!isCompleted && !nextChapterId) {
@@ -42,27 +42,25 @@ export const CourseProgressButton = ({
         router.push(`/courses/${courseId}/chapters/${nextChapterId}`);
       }
 
-      toast.success("Progress updated");
+      toast.success("Progresso atualizado");
       router.refresh();
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Algo deu errado");
     } finally {
       setIsLoading(false);
     }
   }
 
-  const Icon = isCompleted ? XCircle : CheckCircle
-
   return (
     <Button
       onClick={onClick}
-      disabled={isLoading}
       type="button"
-      variant={isCompleted ? "outline" : "success"}
+      variant="success"
       className="w-full md:w-auto"
+      disabled={ isLoading ? isLoading : isCompleted ? true : false}
     >
-      {isCompleted ? "Not completed" : "Mark as complete"}
-      <Icon className="h-4 w-4 ml-2" />
+      Marcar como completo
+      <CheckCircle className="h-4 w-4 ml-2" />
     </Button>
   )
 }
