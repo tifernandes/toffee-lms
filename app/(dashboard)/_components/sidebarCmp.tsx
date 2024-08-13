@@ -3,9 +3,10 @@
 // import { Sidebar } from "./_components/sidebar";
 import { Sidebar, SidebarBody, SidebarLink } from "../../../components/ui/sidebar";
 import React, { useState } from "react";
-import Link from "next/link";
+import Link, { LinkProps } from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { logout } from "@/actions/logout";
 
 import {
   IconArrowLeft,
@@ -14,10 +15,19 @@ import {
   IconUserBolt,
 } from "@tabler/icons-react";
 
-const SidebarCmp = () => {
+interface SidebarCmpProps {
+  auth: boolean;
+  nameUser?: string | null | undefined;
+}
+
+const SidebarCmp: React.FC<SidebarCmpProps> = ({ auth, nameUser }) => {
   const [open, setOpen] = useState(false);
 
-  const links = [
+  const onClick = () => {
+    logout();
+  };
+
+  let links = [
     {
       label: "Inicio",
       href: "/",
@@ -26,27 +36,47 @@ const SidebarCmp = () => {
       ),
     },
     {
-      label: "Profile",
-      href: "#",
+      label: "Login",
+      href: "/auth/login",
       icon: (
         <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
-    },
-    {
-      label: "Settings",
-      href: "#",
-      icon: (
-        <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
-    {
-      label: "Logout",
-      href: "#",
-      icon: (
-        <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
+    }
   ];
+
+  if(auth){
+    links = [
+      {
+        label: "Inicio",
+        href: "/",
+        icon: (
+          <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        ),
+      },
+      {
+        label: "Perfil",
+        href: "#",
+        icon: (
+          <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        ),
+      },
+      {
+        label: "Configuracoes",
+        href: "#",
+        icon: (
+          <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        ),
+      }
+    ];
+  }
+
+  const logoutLabel = {
+    label: "Sair",
+    href: "/",
+    icon: (
+      <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+    ),
+  }
 
   return ( 
     <Sidebar open={open} setOpen={setOpen}>
@@ -57,16 +87,18 @@ const SidebarCmp = () => {
             {links.map((link, idx) => (
                 <SidebarLink key={idx} link={link} />
             ))}
+            {auth && <span onClick={onClick}><SidebarLink link={logoutLabel} /></span>}
             </div>
         </div>
-        <div>
+        {auth && 
+          <div>
             <SidebarLink
             link={{
-                label: "Manu Arora",
+                label: nameUser,
                 href: "#",
                 icon: (
                 <Image
-                    src=""
+                    src="/"
                     className="h-7 w-7 flex-shrink-0 rounded-full"
                     width={50}
                     height={50}
@@ -75,7 +107,8 @@ const SidebarCmp = () => {
                 ),
             }}
             />
-        </div>
+          </div>
+        }
         </SidebarBody>
     </Sidebar>
    );
@@ -93,7 +126,7 @@ export const Logo = () => {
         animate={{ opacity: 1 }}
         className="font-medium text-black dark:text-white whitespace-pre"
       >
-        Acet Labs
+        Toffee Code
       </motion.span>
     </Link>
   );

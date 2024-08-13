@@ -6,7 +6,7 @@ const DashboardLayout = ({
 }) => {
   return ( 
     <div className="h-full w-full">
-      <main className="md:pl-[60px] md:pt-[5px] pt-[45px] h-full">
+      <main className="h-full">
         {children}
       </main>
     </div>

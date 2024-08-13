@@ -1,5 +1,4 @@
-import { auth } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import { currentUser } from "@/lib/auth";
 
 import { db } from "@/lib/db";
 import { SearchInput } from "@/components/search-input";
@@ -7,7 +6,6 @@ import { getCourses } from "@/actions/get-courses";
 import { CoursesList } from "@/components/courses-list";
 
 import { Categories } from "./_components/categories";
-
 interface SearchPageProps {
   searchParams: {
     title: string;
@@ -18,11 +16,12 @@ interface SearchPageProps {
 const SearchPage = async ({
   searchParams
 }: SearchPageProps) => {
-  const { userId } = auth();
 
-  if (!userId) {
-    return redirect("/");
-  }
+  const userSession = await currentUser();
+  const userId = userSession?.id
+
+  console.log('userSession');
+  console.log(userSession);
 
   const categories = await db.category.findMany({
     orderBy: {

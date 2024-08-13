@@ -1,7 +1,5 @@
-import { auth } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 import { File } from "lucide-react";
-
+import { redirect } from "next/navigation";
 import { getChapter } from "@/actions/get-chapter";
 import { Banner } from "@/components/banner";
 import { Separator } from "@/components/ui/separator";
@@ -16,6 +14,7 @@ import { getProgress } from "@/actions/get-progress";
 import { db } from "@/lib/db";
 
 import { Button } from "@/components/ui/button";
+import { currentUser } from "@/lib/auth";
 
 import {
   Sheet,
@@ -33,11 +32,8 @@ const ChapterIdPage = async ({
 }: {
   params: { courseId: string; chapterId: string }
 }) => {
-  const { userId } = auth();
-  
-  if (!userId) {
-    return redirect("/");
-  } 
+  const userSession = await currentUser();
+  const userId = userSession?.id
 
   const {
     chapter,
@@ -71,7 +67,7 @@ const ChapterIdPage = async ({
         include: {
           userProgress: {
             where: {
-              userId,
+              ...(userId ? { userId } : {}),
             }
           }
         },

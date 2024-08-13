@@ -9,6 +9,11 @@ generator client {
   previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
+enum UserRole {
+  ADMIN
+  USER
+}
+
 model Course {
   id String @id @default(uuid())
   userId String
@@ -120,12 +125,6 @@ model StripeCustomer {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-
-enum UserRole {
-  ADMIN
-  USER
 }
 
 model User {

@@ -1,9 +1,7 @@
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import { db } from "@/lib/db";
-
-import { CourseNavbar } from "./_components/course-navbar";
+import { currentUser } from "@/lib/auth";
 
 const CourseLayout = async ({
   children,
@@ -12,11 +10,14 @@ const CourseLayout = async ({
   children: React.ReactNode;
   params: { courseId: string };
 }) => {
-  const { userId } = auth();
+  // const { userId } = auth();
 
-  if (!userId) {
-    return redirect("/")
-  }
+  // if (!userId) {
+  //   return redirect("/")
+  // }
+
+  const userSession = await currentUser();
+  const userId = userSession?.id
 
   const course = await db.course.findUnique({
     where: {
@@ -41,9 +42,9 @@ const CourseLayout = async ({
     },
   });
 
-  if (!course) {
-    return redirect("/");
-  }
+  // if (!course) {
+  //   return redirect("/");
+  // }
 
   return (
     <main className="h-full w-full">
