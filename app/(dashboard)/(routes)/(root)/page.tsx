@@ -20,8 +20,8 @@ const SearchPage = async ({
   const userSession = await currentUser();
   const userId = userSession?.id
 
-  console.log('userSession');
-  console.log(userSession);
+  console.log('userId');
+  console.log(userId);
 
   const categories = await db.category.findMany({
     orderBy: {

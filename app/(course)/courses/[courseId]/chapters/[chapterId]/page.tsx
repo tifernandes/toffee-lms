@@ -49,34 +49,54 @@ const ChapterIdPage = async ({
     courseId: params.courseId,
   });
 
-  const progressCount = await getProgress(userId, params.courseId);
+  let progressCount = await getProgress(userId, params.courseId);
 
   if (!chapter || !course) {
     return redirect("/")
   }
 
-  const courseQuery = await db.course.findUnique({
-    where: {
-      id: params.courseId,
-    },
-    include: {
-      chapters: {
-        where: {
-          isPublished: true,
-        },
-        include: {
-          userProgress: {
-            where: {
-              ...(userId ? { userId } : {}),
+  let courseQuery;
+
+  if(userId){
+    courseQuery = await db.course.findUnique({
+      where: {
+        id: params.courseId,
+      },
+      include: {
+        chapters: {
+          where: {
+            isPublished: true,
+          },
+          include: {
+            userProgress: {
+              where: {
+                userId,
+              }
             }
+          },
+          orderBy: {
+            position: "asc"
           }
         },
-        orderBy: {
-          position: "asc"
-        }
       },
-    },
-  });
+    });
+  }else{
+    courseQuery = await db.course.findUnique({
+      where: {
+        id: params.courseId,
+      },
+      include: {
+        chapters: {
+          where: {
+            isPublished: true,
+          },
+          orderBy: {
+            position: "asc"
+          }
+        },
+      },
+    });
+  }
 
   if (!courseQuery) {
     return redirect("/");
