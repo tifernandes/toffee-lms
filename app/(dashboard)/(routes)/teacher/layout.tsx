@@ -1,13 +1,15 @@
 import { isTeacher } from "@/lib/teacher";
-import { auth } from "@clerk/nextjs";
+import { currentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-const TeacherLayout = ({
+const TeacherLayout = async ({
   children
 }: {
   children: React.ReactNode;
 }) => {
-  const { userId } = auth();
+
+  const userSession = await currentUser();
+  const userId = userSession?.id
 
   if (!isTeacher(userId)) {
     return redirect("/");

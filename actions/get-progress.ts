@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
 
 export const getProgress = async (
-  userId: string,
-  courseId: string,
+  userId?: string,
+  courseId?: string,
 ): Promise<number> => {
   try {
     const publishedChapters = await db.chapter.findMany({

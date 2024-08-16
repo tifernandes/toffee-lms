@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Eye, LayoutDashboard, Video } from "lucide-react";
@@ -12,13 +11,15 @@ import { ChapterDescriptionForm } from "./_components/chapter-description-form";
 import { ChapterAccessForm } from "./_components/chapter-access-form";
 import { ChapterVideoForm } from "./_components/chapter-video-form";
 import { ChapterActions } from "./_components/chapter-actions";
+import { auth } from "@/auth";
 
 const ChapterIdPage = async ({
   params
 }: {
   params: { courseId: string; chapterId: string }
 }) => {
-  const { userId } = auth();
+  const session = await auth();
+  const userId = session?.user.id
 
   if (!userId) {
     return redirect("/");
@@ -40,8 +41,7 @@ const ChapterIdPage = async ({
 
   const requiredFields = [
     chapter.title,
-    chapter.description,
-    chapter.videoUrl,
+    chapter.description
   ];
 
   const totalFields = requiredFields.length;

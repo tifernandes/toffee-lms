@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
@@ -8,7 +8,8 @@ export async function POST(
   req: Request,
 ) {
   try {
-    const { userId } = auth();
+    const session = await auth();
+    const userId = session?.user.id
     const { title } = await req.json();
 
     if (!userId || !isTeacher(userId)) {
